@@ -1,0 +1,40 @@
+<?xml version='1.0'?>
+<!-- This file represents a fragment of a book store inventory database -->
+<vr:find xmlns:vr="http://www.perst.org#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <book>
+    <title>The Autobiography*</title>
+  </book>
+  <book>
+    <price>[8,10]</price>
+  </book>
+  <book>
+    <title>*Man</title>
+  </book>
+  <book genre="philosophy"/>
+  <book>
+    <title>*Benjamin*</title>
+    <author>
+       <first-name>Benjamin</first-name>
+    </author>
+  </book>
+  <book>
+    <author>
+       <name>Plato*</name>
+    </author>
+  </book>
+  <vr:thing rdf:about="http://www.bookstore.com/books/12345"/>
+  <book vr:keyword="autobiography Franklin"/>
+  <bookshop>
+    <location>
+      <vr:point x="1005" y="1005"/>
+    </location>
+  </bookshop>
+  <orange/>
+  <fruit delivery="[2005-07-01,2005-08-01)"/>
+  <rdfs:Class>
+    <vr:keyword>red,fruit</vr:keyword>
+  </rdfs:Class>
+</vr:find>
+
+   

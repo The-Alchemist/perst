@@ -1,0 +1,87 @@
+<title>
+Getting started with ContastsIndex full text search sample for Android
+</title>
+<body>
+<h1>
+Getting started with ContastsIndex full text search sample for Android
+</h1>
+
+
+<a href="http://code.google.com/android/" target="_blank">Android</a> is Google's new free mobile
+platform based on Linux. It provides Java as its main application
+development language (and includes the Dalvik virtual machine, which is
+optimized for mobile devices). Right now no actual devices use this platform, but the SDK is available and developers can write
+applications for the platform and run them in its emulator.<p>
+
+Android is neither Java ME (J2ME)- nor J2SE-compatible. It provides its own
+framework of classes, but most of the Java 1.6 SE classes are present here, so it is possible to use Perst version 1.5 under Android. Although
+Android includes a built-in database system, SQLite, Perst provides better performance (almost ten times better in our TestIndex benchmark test) and of course, Perst delivers the benefits of object orientation, including a seamless
+interface with application objects, and the ability to persist
+complex data structures.<p>
+
+Although the perst.jar library can be used under Android without any
+changes, there is one aspect which should be noted. It is not possible to pass just name of the file
+to <code>Storage.open</code> method - it will cause <code>java.io.FileNotFound</code> exeption.
+You should exother explictely specify absolute path, either use 
+<code>android.content.ContextWrapper.getFileStreamPath</code> method to obtain absolute path to the file:
+
+<pre>
+<font color="#008000">
+        String databaseName = "testindex.dbs";
+        String databasePath = getFileStreamPath(databaseName).getAbsolutePath();	
+
+        // Get instance of Perst storage
+        Storage db = StorageFactory.getInstance().createStorage();
+
+        // Open the database with given database name and specified page pool (database cache) size
+        db.open(databasePath, pagePoolSize);
+</font>
+</pre>
+ 
+<table>
+<tr>
+<td>
+ContactsIndex is a built-in search engine (similar to Google Desktop) for your
+Android mobile phone. Right now it indexes only the contact list of your phone. But
+in principle it could be extended to index all files in a phone's file
+system, including word processing documents, stored HTML pages, PDFs,
+song/picture metainformation, schedules and to-do lists, and more. Such
+extension would require, at least, development of parsers for the various
+file formats.
+<p>
+When it is launched the first time, ContactsIndex extracts the contents of all contact lists and stores them in the Perst Lite storage. In addition to fetching and storing all persons information from phone contacts list, 
+the ContactsIndex appliccation also builds a full text search index for all text information extracted from the contact list. So issuing the query "doctor" returns information about any doctor's contact in the contact list. And the query "Anna Beverly Hills" will help you to remember contacts of Anna living in Beverly Hills. 
+<p>
+The primary goal of this example was to illustrate Perst full text search capabilities rather than create an appliction for everyday use on mobile phones. So this example mostly illustrates how to store data in Perst and how to build and use full text search index. 
+<p>
+To build and run this application you need to have the Eclipse IDE with
+an installed Android plugin. All necessary information about installing
+the Android plugin for Eclipse is available <a href="http://code.google.com/android/intro/installing.html#installingplugin" target="_blank">here</a>.<p>
+
+To get started with the ContactsIndex benchmark, follow these steps:
+
+<ol>
+<li>Download Perst and extract it to the root directory (so Perst will be located in <code>\Perst</code>). Perst can be installed in another place, but then you will need to adjust the path to perst15.jar in the Eclipse project settings.</li>
+<li>Import the Benchmark package to the workspace (Use the File/Import menu item and to start the import dialog, choose <b>General/Existing Projects into workspace</b>, then toggle <b>Select root directory</b> and specify <code>perst/tst/android/ContactsIndex</code> directory.</li>
+<li>Choose Run item in the menu and select <b>Android Application</b>. The Android emulator should be started and ContactsIndex application launched in it.</li>
+<li>When been started first time, ContactsIndex application import all information from phone's 
+contacts list to its own database. To be able to play with this sample in emulator, you first need to add
+some contacts. 
+<li>Specify search query: any words or phrases from personal information in contacts list.
+Logical expressions (AND, OR, NOT) are also supported.
+Press the Menu button in the emulator, and a pop-up menu with Find and Refresh items should appear
+(see screenshot). You need to perform refresh to import new data from contacts list if it was changed.
+To return back uses <code>Back</code> button on the phone.
+</ol>
+</td>
+<td align="center"><img src="android.jpg" width=378 height=731></td>
+</tr></table>
+<p>
+
+For support please e-mail <a href="mailto:support@mcobject.com">support@mcobject.com</a> or visit our
+Perst support forum at <a href="http://forums.mcobject.com/" target="_blank">http://forums.mcobject.com/</a>.
+
+</body>
+</html>
+	
+

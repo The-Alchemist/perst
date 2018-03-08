@@ -1,0 +1,62 @@
+<!-- 
+************************************************************
+targets: makejar - compile & jar
+	 compiletests - compile test
+
+************************************************************ 
+-->
+
+
+<project name="Continuous" default="all" basedir=".">
+	<property name="lucene.jar" value="c:/lucene-2.4.1/lucene-core-2.4.1.jar" />
+	<target name="makedocs">
+		<javadoc
+			sourcepath="src"
+			destdir="doc"
+			nodeprecated="true"
+			nodeprecatedlist="true"
+			public="true"
+			packagenames="org.garret.perst.continuous">
+			<classpath location="../lib/perst.jar" />
+			<classpath location="${lucene.jar}" />                
+		</javadoc>
+	</target>
+
+
+	<target name="init" depends="clear" >
+		<mkdir dir="classes"/>
+	</target>
+	
+
+	<target name="clear">
+		<delete dir="classes" />
+	</target>
+
+	<target name="compile" depends="init">
+		<javac srcdir="src" source="1.5" destdir="classes" deprecation="off"  debug="on" optimize="on"> 
+			<classpath location="../lib/perst.jar" />
+			<classpath location="${lucene.jar}" />
+		</javac>
+	</target>
+
+
+	<target name="compiletests" depends="compile" >
+		<delete dir="classes/tst" />
+		<mkdir dir="classes/tst" />
+
+		<javac srcdir="tst" source="1.5" destdir="classes/tst" deprecation="off"  debug="on" optimize="on"> 
+			<classpath location="../lib/perst.jar" />
+			<classpath location="../lib/continuous.jar" />
+		</javac>
+	</target>
+
+
+	<target name="makejar" depends="compile">
+		<jar jarfile="../lib/continuous.jar"  basedir="classes" includes="**" />
+	</target>
+	
+
+	<target name="all" depends="makejar,makedocs,compiletests">
+	</target>
+</project>
+

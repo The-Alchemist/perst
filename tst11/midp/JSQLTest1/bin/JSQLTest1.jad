@@ -1,0 +1,8 @@
+MIDlet-1: JSQLTest1, JSQLTest1.png, JSQLTest
+MIDlet-Jar-Size: 494873
+MIDlet-Jar-URL: JSQLTest1.jar
+MIDlet-Name: JSQLTest1
+MIDlet-Vendor: Unknown
+MIDlet-Version: 1.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0

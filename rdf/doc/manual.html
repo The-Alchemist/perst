@@ -1,0 +1,134 @@
+<html>
+<title>Rdf data mode support</title>
+
+<h2>What is RDF?</h2>
+<a href="http://www.w3.org/RDF/">RDF</A>--the Resource Description Framework--is a universal format for data on the Web. Using a simple relational model, it allows structured and semi-structured data to be mixed, exported and shared across different applications. RDF data describe all sorts of things, and where XML schemas just describe documents, RDF and OWL schemas ("ontologies") talk about the actual things. This gives greater re-use. Where XML provides interoperability within one application (e.g. bank statements) using a given schema, RDF provides interoperability across applications (eg import your bank statements into your calendar).
+
+RDF started as framework for metadata; providing interoperability between applications that exchange machine-understandable information on the Web. RDF emphasizes facilities to enable automated processing of Web resources and as such provides the basic building blocks for supporting the Semantic Web. RDF metadata can be used in a variety of application areas; for example: in resource discovery to provide better search engine capabilities; in cataloging for describing the content and content relationships available at a particular Web site, page, or digital library; by intelligent software agents to facilitate knowledge sharing and exchange; in content rating; in describing collections of pages that represent a single logical "document"; for describing intellectual property rights of Web pages, and in many others. RDF with digital signatures will be key to building the "Web of Trust" for electronic commerce, collaboration, and other applications.
+
+<h2>RDF and Perst</h2>
+Perst object-oriented database makes it possible to make persistent statically typed objects (Java or C#).
+It provides transparent way for storing/fetching such objects.
+But many applications today has to deal with more flexible data represented in XML.
+In some cases it is possible to convert this data in application objects but in most cases it is not possible,
+because the main idea of using XML data representation is extending flexibility and been able to work with
+structured data which format is not statically known at application compilation time.<P>
+
+This package allows store such data in Perst database and efficiently search/retrieve this data.
+Now most of commercial databases provides special XML extensions, modules or utilities allowing 
+to deal with XML data which becomes more and more popular. Perst is able to manipulate with XML data 
+more efficiently than relational database systems, since it can directly handle references, nested and recursive 
+data structures.<P>
+
+Generally underlying data model is based on graph
+where vertices corresponds to objects and their field values and edges
+- field names (see attached file). So each object (XML element)
+is represented as set of properties. Property can be of string,
+datetime, numeric, BLOB or reference type. For each type of property separate
+index exists. So it was not intention to precisely store XML document model 
+(attributes, elements, values,  comments, ...) - for example
+attributes and subelements are treated by database in the same way.<P>
+
+This package doesn't allow to modify stored data. Each time you have to update an object, 
+new version of the object is created. So the system maintains linear version history for each 
+object<P>
+
+<h2>RDF data search capabilities</h2>
+
+This package provides some kind of QBE (Query-By-Example) search.
+User specifies RDF element which properties are matched with the properties of the objects
+stored in the database. The following types of search are supported:<p>
+
+<UL>
+<LI><b>URI search</b><br>For example "*/person/name".
+Database holds two indices for URI prefixes and suffixes, so it is
+able to fast locate object matching both suffix and prefix URI
+patterns: "*/person/name", "http://www.yellowpages.com/companies/*"
+
+<LI><b>Type search</b><br>Checks if selected object is instance of specified
+type (the type of the object is the same as specified or derived from
+the specified type. Type hierarchy corresponds to the current state of
+the database (so even if in the past there was different inheritance graph,
+type checking predicate will use only current inheritance hierarchy)
+
+<LI><b>Search by property value</b><br><i>&lt;name,value&gt;</i> pairs are specifying values of the properties.
+Property should be of string, numeric, datetime or reference type. In first case (string
+property), search value can be string pattern containing '*' wildcard. 
+In case of reference property value in <i>&lt;name,value&gt;</i> pair should be another pair 
+specifying restriction for the property of referenced object. 
+There is compound index <i>&lt;property-name, property-value&gt;</i> allowing to match  <i>&lt;name,value&gt;</i> 
+pair using index search. Separate indices are provided for string, numeric and reference properties.
+In case of indirect access to a property
+(<code>&lt;book&gt;&lt;author&gt;&lt;name&gt;Plato*&lt;/name&gt;&lt;/author&gt;&lt;/book&gt;</code>)
+pipeline of index searches is used: first using string index we look for "name" which
+value starts with "Plato" prefix, for each located object we perform
+search in reference index to locate "author" property referencing this
+object...and so on, up to the top object.
+
+<LI><b>Range search</b><br>
+For numeric, date and string properties is possible to specify
+range of value. For example "[1,5]" - specifies close range from 1 till 5. Each boundary of
+the range can be inclusive or exclusive: "(0, 100]", "(-1,+1)".
+Example of search pattern:
+<pre>
+  &lt;book&gt;
+    &lt;price&gt;[8,10]&lt;/price&gt;
+  &lt;/book&gt;
+</pre>
+
+using index search/ Index search is not possible in case of chain of
+<name:value> pairs (reference properties), because to be apply index
+in this case we need to maintain inverse references.
+
+<LI><b>Version criteria</b><br> 
+Currently four criteria are provided:
+<OL>
+<LI>Latest version
+<LI>Latest version before specified timestamp
+<LI>Oldest version after specified timestamp
+<LI>All versions
+</OL>
+
+<LI><b>Spatial search</b><br>
+An object can contain <code>&lt;vr:rectangle&gt;</code> and <code>&lt;vr:point&gt;</code>
+elements. Perst <code>SpatialIndex</code> container is used to locate overlapped rectangles.
+
+<LI><b>Keyword search</b><br>
+When object in stored in the database, the values of all string properties are split into the 
+words (separated by <i>separator characters</i>, default separators are space and comma),
+and are placed into inverse index excluding widely used common words such as a, the, a, to,...
+Using <code>&lt;keyword&gt;</code> element it is possible to specify list of words which should be
+present in document. Keyword search is case insensitive.
+</UL><p>
+
+
+<h2>XML server</h2>
+
+XML server class allows to store RDF data represented in XML format and search them using QBE-like queries.
+Input of XmlServer class are XML documents which root element should be either 
+<code>&lt;vr:store&gt;</code>, either <code>&lt;vr:find&gt;</code>.
+First one allows to store one or more objects, and second one - specify one of more search patterns 
+(result is produced independently for each pattern). Result of find request 
+is document containing  <code>&lt;vr:result&gt;</code> root element which siblings are RDF objects
+matching search patterns. Pattern XML element can have the following optional attributes:<p>
+
+<table border>
+<tr><th>Attribute</th><th>Type of value</th><th>Description</th><th>Default value</th></tr>
+<tr><td><code>rdf:about</code></td><td>Object URI</td><td>Specify search pattern for object URI</td><td>None</td><tr>
+<tr><td><code>vr:before</code></td><td>Timestamp</td><td>Only the latest versions before the specified timestamp will be inspected</td><td>Latest version search kind is used</td><tr>
+<tr><td><code>vr:after</code></td><td>Timestamp</td><td>Only the oldest versions after the specified timestamp will be inspected</td><td>Latest version search kind is used</td><tr>
+<tr><td><code>vr:all</code></td><td>Boolean</td><td>If value of this attribute is "true", then search will be performed in all versions, otherwise only in the latest version in version histories</td><td>Latest version search kind is used</td><tr>
+<tr><td><code>vr:depth</code></td><td>Integer</td><td>Specifies depth of dumping object structure.
+The system will expand in XML dump all objects which are part of the containing object (URI starts with the URI 
+of the containing object) or object which depth from the root object doesn't exceed specified</td><td>0</td><tr>
+</table><p>
+
+Please look at the example of <a href="../samples/store-book.xml">storing</a> and
+<a href="../samples/find-book.xml">searching</a> RDF data.
+To start example, please use "run.bat" script in <code>rdf/samples</code> directory.
+
+<h2>RDF package API</h2>
+
+Please look <a href="index.html">here</a> at the description of RDF package API generated by JavaDOC.
+
+</html>

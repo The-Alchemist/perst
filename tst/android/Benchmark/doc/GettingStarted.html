@@ -1,0 +1,99 @@
+<title>
+Getting Started With TestIndex Benchmark For Android
+</title>
+<body>
+<h1>
+Getting Started With TestIndex Benchmark For Android
+</h1>
+
+
+<a href="http://code.google.com/android/" target="_blank">Android</a> is Google's new free mobile
+platform based on Linux. It provides Java as its main application
+development language (and includes the Dalvik virtual machine, which is
+optimized for mobile devices). Right now no actual devices use this platform, but the SDK is available and developers can write
+applications for the platform and run them in its emulator.<p>
+
+Android is neither Java ME (J2ME)- nor J2SE-compatible. It provides its own
+framework of classes, but most of the Java 1.6 SE classes are present here, so it is possible to use Perst version 1.5 under Android. Although
+Android includes a built-in database system, SQLite, Perst provides better performance (almost ten times better in our TestIndex benchmark test) and of course, Perst delivers the benefits of object orientation, including a seamless
+interface with application objects, and the ability to persist
+complex data structures.<p>
+
+Although the perst.jar library can be used under Android without any
+changes, there is one aspect which should be noted. It is not possible to pass just name of the file
+to <code>Storage.open</code> method - it will cause <code>java.io.FileNotFound</code> exeption.
+You should exother explictely specify absolute path, either use 
+<code>android.content.ContextWrapper.getFileStreamPath</code> method to obtain absolute path to the file:
+
+<pre>
+<font color="#008000">
+        String databaseName = "testindex.dbs";
+        String databasePath = getFileStreamPath(databaseName).getAbsolutePath();	
+
+        // Get instance of Perst storage
+        Storage db = StorageFactory.getInstance().createStorage();
+
+        // Open the database with given database name and specified page pool (database cache) size
+        db.open(databasePath, pagePoolSize);
+</font>
+</pre>
+ 
+
+<table>
+<tr>
+<td>
+This Perst distributive includes a port of the Perst TestIndex benchmark to the Android platform. 
+<a href="../src/org/garret/bench/PerstTest.java">TestIndex.java</a> is a very simple benchmark
+measuring performance of basic database operation: inserting, searching and deleting records. It uses simple records with two primary
+key columns: one of 8-byte integer type and another of string type. These columns are assigned random values during database initialization.
+
+The benchmark consists of four steps:
+
+<ol>
+<li>Insert data into the database. The number of inserted objects for the Android platform is 10000.</li>
+<li>Perform index searches for all objects using both indices.</li>
+<li>Iterate through all objects using index iterators.</li>
+<li>Locate and remove all objects one-by-one.</li>
+</ol><p>
+
+To allow comparison of Perst's performance with that of the built-in SQLite database system, this application includes a port of the benchmark for SQLite.
+
+The structure of the application is the following:
+
+<dl>
+<dt><a href="../src/org/garret/bench/Benchmark.java">Benchmark.java</a></dt>
+<dd>Main application class: makes it possible to user to start Perst or SQLite benchmark.</dd>
+<dt><a href="../src/org/garret/bench/Test.java">Test.java</a></dt>
+<dd>Base class for all tests</dd>
+<dt><a href="../src/org/garret/bench/PerstTest.java">PerstTest.java</a></dt>
+<dd>Implementation of benchmark for Perst</dd>
+<dt><a href="../src/org/garret/bench/SqlLiteTest.java">SqlLiteTest.java</a></dt>
+<dd>Implementation of benchmark for SQLite</dd>
+<dt><a href="../src/org/garret/bench/ProgressMonitor.java">ProgressMonitor.java</a></dt>
+<dd>Class responsible for updating UI during test execution</dd>
+</dl><p>
+
+To build and run this application you need to have the Eclipse IDE with
+an installed Android plugin. All necessary information about installing
+the Android plugin for Eclipse is available <a href="http://code.google.com/android/intro/installing.html#installingplugin" target="_blank">here</a>.<p>
+
+To get started with the TestIndex benchmark, follow these steps:
+
+<ol>
+<li>Download Perst and extract it to the root directory (so Perst will be located in <code>\Perst</code>). Perst can be installed in another place, but then you will need to adjust the path to perst15.jar in the Eclipse project settings.</li>
+<li>Import the Benchmark package to the workspace (Use the File/Import menu item and to start the import dialog, choose <b>General/Existing Projects into workspace</b>, then toggle <b>Select root directory</b> and specify <code>perst/tst/android/Benchmark</code> directory.</li>
+<li>Choose Run item in the menu and select <b>Android Application</b>. The Android emulator should be started and Benchmark application launched in it.</li>
+<li>Press the Menu button in the emulator, and a pop-up menu with Perst and SQLite items should appear (see screenshot). Choose which test you want to run. Please note that execution of the Perst test will take about 3 minutes and the SQLite test - about 20 minutes.</li>
+</ol>
+</td>
+<td align="center"><img src="android.jpg" width=501 height=840></td>
+</tr></table>
+<p>
+
+For support please e-mail <a href="mailto:support@mcobject.com">support@mcobject.com</a> or visit our
+Perst support forum at <a href="http://forums.mcobject.com/" target="_blank">http://forums.mcobject.com/</a>.
+
+</body>
+</html>
+	
+

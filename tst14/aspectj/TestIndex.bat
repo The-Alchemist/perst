@@ -1,0 +1,1 @@
+java -classpath ../../lib/perst14_aspectj.jar;.;%classpath% TestIndex

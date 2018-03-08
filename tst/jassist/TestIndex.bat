@@ -1,0 +1,1 @@
+java -Xmx256M -classpath ../../lib/perst-jassist.jar;../../lib/javassist.jar;. Launcher TestIndex

@@ -1,0 +1,10 @@
+call runtests
+call runtests
+call runtests
+call runtests
+call runtests
+call runtests
+call runtests
+call runtests
+call runtests
+call runtests

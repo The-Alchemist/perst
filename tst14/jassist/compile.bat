@@ -1,0 +1,1 @@
+javac -classpath ../../lib/perst14-jassist.jar;../../lib/javassist.jar;. *.java

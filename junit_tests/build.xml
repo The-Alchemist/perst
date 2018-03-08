@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ This file was created manually and used as the default way to compile the project.
+-->
+
+<project name="PERST tests" default="all" basedir=".">
+
+<!--== The properties definition ============================================-->
+    <property name="test.source.dir"    value="src"/>
+    <property name="test.build.dir"     value="bin"/>
+
+    <property name="api.doc.dir"        value="doc"/>
+    <property name="api.doc.packages"   value="org.garret.perst"/>
+    
+    <property name="perst.jar"          value="../lib/perst.jar"/>
+    
+<!-- The follow property set the source version -->
+    <property name="source.version"     value="1.5"/>
+    
+<!--== The general targets ==================================================-->
+    <target name="all"     depends="compile-test"/>
+    <target name="javadoc" depends="make-all-javadoc"/>
+    <target name="test"    depends="run-test">
+		 <fail message= "Some tests failed!!!" if= "test.failed" /> 
+	</target>
+    
+
+<!--== The clean & init targets =============================================-->
+    <target name="clean">
+        <delete dir="${test.build.dir}"/>
+        <delete dir="${api.doc.dir}"/>
+    </target>
+
+    <target name="init">
+        <mkdir dir="${test.build.dir}"/>
+        <mkdir dir="${api.doc.dir}"/>
+    </target>
+    
+
+    <target name="compile-test" depends="init">
+        <javac 
+            srcdir="${test.source.dir}"
+            destdir="${test.build.dir}"
+            source="${source.version}"
+            deprecation="on"
+            debug="on" 
+            optimize="on">
+            <classpath>
+                <pathelement path="${perst.jar}" />
+            </classpath>
+        </javac>
+    </target>
+
+<!--== The javadoc target ===================================================-->
+
+    <target name="make-all-javadoc" depends="init">
+        <javadoc
+            sourcepath="${test.source.dir}"
+            destdir="${api.doc.dir}"
+            nodeprecated="true"
+            nodeprecatedlist="true"
+            public="true"
+            packagenames="${api.doc.packages}"
+        />
+    </target>
+
+<!--== The run test target ==================================================-->
+    <target name="run-test" depends="compile-test">
+        <junit printsummary="yes" fork="yes" failureproperty= "test.failed">
+            <classpath>
+                <pathelement path="${perst.jar}" />
+                <pathelement path="${project.build.dir}" />
+                <pathelement path="${test.build.dir}" />
+            </classpath>
+            <test name="org.garret.perst.All" />
+<!--
+	    <batchtest>
+                <fileset dir="${test.source.dir}" includes="org/garret/perst/**"/>
+        </batchtest>
+-->
+	    <formatter usefile="false" type="plain" />
+        </junit>
+    </target>
+</project>

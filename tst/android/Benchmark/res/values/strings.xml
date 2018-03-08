@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, Benchmarking</string>
+    <string name="app_name">Benchmark</string>
+<string name="perst">Perst</string>
+<string name="sqlite">SQLite</string>
+    
+
+
+
+
+<string name="about">This benchmark measures performance of basic database operations:  insert, select and delete. The record consists of 8-byte integer and string indexed columns assigned a random value. The benchmark steps:\n1. Inserts 10000 records in the database\n2. Perform index search using both keys\n3. Perform iterations through all records\n4. Delete all records\nPlease start Perst or SqLite benchmark from the menu.</string>
+</resources>

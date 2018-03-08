@@ -1,0 +1,858 @@
+--- Release version 1.01 21.02.2003 -------------------------------------
+Initial release
+
+--- Release version 1.02 25.02.2003 -------------------------------------
+1. Support value types
+2. Add FieldIndex interface
+3. Fix bug in unique index support
+
+--- Release version 1.03 03.03.2003 -------------------------------------
+1. Fix bug in LinkImpl constructor
+2. Make it possible to treate any class which is not persistent capable as value 
+(by setting perst.implicit.values system property to true)
+3. Make it possible to call IPersistent.deallocate multiple times.
+
+--- Release version 1.04 12.03.2003 -------------------------------------
+1. Fix bug in rollback method
+2. Add IPersistent.onLoad method
+3. Fix bug in BtreeFieldIndex
+4. Add TestLink example
+
+--- Release version 1.05 04.04.2003 -------------------------------------
+1. Add optional garbage collection
+
+--- Release version 1.06 09.04.2003 -------------------------------------
+1. Add object level locking
+
+--- Release version 1.07 18.04.2003 -------------------------------------
+1. Add Persistent.modify method, allowing to mark object as dirty. 
+Object will be automatically saved during transaction commit.
+2. Add index iterator.
+3. Add spatial index.
+
+--- Release version 1.08 22.04.2003 -------------------------------------
+1. Implement more sophisticated iterators for index search  
+2. Fix bug in R-Tree
+ 
+--- Release version 1.09 06.05.2003 -------------------------------------
+1. Fix bug in packing array of strings. 
+2. Fix bug with handling int keys in B-Tree
+
+--- Release version 1.10 28.05.2003 -------------------------------------
+1. Add Storage.isOpened() method
+2. Change store() with modify() in Btree implementation
+3. Derive IPersistent interface from java.io.Serializable
+
+--- Release version 1.11 09.06.2003 -------------------------------------
+1. Add methods for database import/export in XML format. 
+
+--- Release version 1.12 18.06.2003 -------------------------------------
+1. Fix bug in Btree (replacing existed values in scalar index)
+2. Optional usage of Java serialization mechanism to serialize non-persistent object.
+
+--- Release version 1.13 04.07.2003 -------------------------------------
+1. Make it possible to provide user specific implementation of PERST file interface. 
+For example it can be used to work with flash card or encrypted files.
+
+--- Release version 1.14 09.07.2003 -------------------------------------
+1. Add Storage.getObjectByOID method
+2. Add autoincremented field support: FieldIndex.append method
+
+--- Release version 1.15 16.07.2003 -------------------------------------
+
+1. Add Index.entryInterator() method which makes it possible to access both key and value.
+
+--- Release version 1.16 23.07.2003 -------------------------------------
+
+1. Fix bug in index iterator (iterating through empty index)
+
+--- Release version 1.17 01.08.2003 -------------------------------------
+
+1. Store weak references in modified object list to make it possible to GC to reclaim these objects
+2. Support sets of persistent objects (Storage.createSet method)
+
+--- Release version 1.18 19.09.2003 -------------------------------------
+
+1. Add Link.iterator and Link.toArray(IPersistent[] arr) methods
+
+--- Release version 1.19 24.09.2003 -------------------------------------
+
+1. Provide new implementation of modified object list. Old implementation introduced in 
+version 1.17 and based on weak reference in finalize method in Persistent class
+can cause loose of modifications if weak reference is cleared by GC, but finalize
+method is not invoked before transaction commit.
+
+--- Release version 1.20 03.10.2003 -------------------------------------
+
+1. Add FieldIndex.contains method
+2. Replace '$' in Java identifiers during XML export
+
+--- Release version 1.21 07.10.2003 -------------------------------------
+
+1. Support of main-memory databases.
+
+--- Release version 1.22 17.10.2003 -------------------------------------
+
+1. Add SortedCollection container class
+2. Fix bugs in main-memory database support
+3. Fix bug with lost modifications
+
+--- Release version 2.01 23.10.2003 -------------------------------------
+
+1. Automatic scheme evaluation support.
+Attention: database format is incompatible with version 1.22!
+2. New implementation of modified object list
+3. Make it possible to tune most of database parameters using Storage.setProperty/Storage.setProperties methods
+
+--- Release version 2.02 07.11.2003 -------------------------------------
+
+1. Support indices for byte arrays
+2. Support compound indices
+
+--- Release version 2.03 19.11.2003 -------------------------------------
+
+1. Add IPersistent.invalidate method. Transaction rollback will now invalidate all modified objects.
+2. Support per-thread transactions (Storage.beginTransaction and Storage.endTranasction methods)
+3. Yet another attempt to eliminate modification list and handle modified object using weak references.
+
+--- Release version 2.04 26.11.2003 -------------------------------------
+
+1. Introduce IPersistentSet interface which is now returned by Storage.createSet method
+
+--- Release version 2.05 28.11.2003 -------------------------------------
+
+1. Make it possible to profile storage memory using Storage.getMemoryDump() method 
+
+--- Release version 2.07 14.12.2003 -------------------------------------
+
+1. Fix critical bug in object index relocation algorithm
+2. Fix bug in recovery procedure
+
+--- Release version 2.08 20.12.2003 -------------------------------------
+
+1. Add Blob class
+2. Make it possible to specify in Index string key directly without Key wrapper.
+
+--- Release version 2.09 23.12.2003 -------------------------------------
+1. Fix bug in Link.insert method
+2. Add Storage.setClassLoader and Storage.getClassLoader methods
+
+--- Release version 2.10 30.12.2003 -------------------------------------
+1. Fix bug in XML import
+
+--- Release version 2.11 07.01.2004 -------------------------------------
+1. Add Storage.backup method which can be used for online backups and database compactification
+2. Add support of time series
+
+--- Release version 2.12 12.01.2004 -------------------------------------
+1. Fix bug in backup method
+
+--- Release version 2.13 24.01.2004 -------------------------------------
+1. Add 007 benchmark
+
+--- Release version 2.14 30.01.2004 -------------------------------------
+1. Providing transparent interface to Perst using AspectJ.
+This interface was originally designed by atrick Morris-Suzuki and
+later changed by me.
+2. Fix bug in object modification mechanism which can cause deadlock.
+3. Make it possible to specify part of compound key in query
+
+--- Release version 2.15 06.02.2004 -------------------------------------
+1. Yet another implementation of transparent iterface to Perst using JAssist
+
+--- Release version 2.16 10.02.2004 -------------------------------------
+1. Version of Perst interface for JDK 1.5 (generic container classes)
+2. Fix bug in Persistent.invalidate method
+
+--- Release version 2.17 26.02.2004 -------------------------------------
+1. Add check for concurrent modifications in B-Tree iterator
+2. Add Projection class
+3. Add Index.getPrefix, Index.prefixIterator, FieldIndex.getPrefix and FieldIndex.prefixIterator methods
+4. Fix bugs in RelationImpl class
+
+--- Release version 2.18 07.03.2004 -------------------------------------
+1. Add default comparer for SortedCollection class (expecting that members of collection 
+   implement Comparable interface)
+2. Fix bug in Index.set method for non-unique indices
+3. Support of database file encryption 
+
+--- Release version 2.19 18.03.2004 -------------------------------------
+1. Fix bug in file encyption
+
+--- Release version 2.20 04.04.2004 -------------------------------------
+1. Add Link.Pin and Link.Unpin methods. Do not implicitely pin accessed Link elements.
+2. Change class descriptor loading algorithm to avoid stack overflow
+   in applications with large number of classes
+3. Detect bugs related with incorrect serialization of persistent object as raw or value type
+4. Fix bug in automatic scheme evaluation implementation.
+
+--- Release version 2.21 16.04.2004 -------------------------------------
+1. Add Index.getKeyType(), FieldIndex.getIndexedClass() and FieldIndex.getKeyFields() methods
+2. Add Index.prefixSearch method which can be used to locate keys which are prefixes of the specified word.
+
+--- Release version 2.22 30.04.2004 -------------------------------------
+1. Implement reallocatable bitmap (now database size is not limited by dbDatabaseOffsetBits constant)
+
+--- Release version 2.23 09.05.2004 -------------------------------------
+1. Make StorageImpl.swizzle and StorageImpl.unswizzle method protected to be allow
+their redefinition in derived class.
+2. Make it possible to store Java primitive objects wrappers (Integer, Double...)
+and references to persistent object in raw field.
+
+--- Release version 2.24 17.05.2004 -------------------------------------
+1. Index.remove(Key), Index.set(Key,IPersistent), FieldIndex.remove(Key) and FieldIndex.set(IPersistent)
+methods now return reference to the removed/replaced object.
+
+--- Release version 2.25 28.05.2004 -------------------------------------
+1. Optimized version of T-Tree algorithm
+
+--- Release version 2.26 07.06.2004 -------------------------------------
+1. Automatic generation of default constructor for persistent classes
+2. Fix bug in FieldIndex.remove(Key) introduced in version 2.24
+
+--- Release version 2.27 15.06.2004 -------------------------------------
+1. Add MultiFile class
+2. Use Thread.currentThread().getContextClassLoader().loadClass() instead of Class.forName()
+3. Use PersistentObjectInputStream class which is able to correctly resolve references to 
+persistent classes from serialized transient objects. 
+4. Fix bug in XMLExporter.exportBinary
+5. Change R-Tree and rectangle implementation to calculate rectangles area using long type
+
+--- Release version 2.29 05.07.2004 -------------------------------------
+1. Make it possible to use Storage.gc() for verification of consistency of database.
+Now this method returns number of deallocated (garbage objects) and detects dangling references in
+the database. 
+2. Add SpatialIndexR2 and RectangleR2 classes for spatial objects with floating point coordinates.
+Also new spatial index is more efficient for large collections (it doesn't pin all its pages in memory).
+SpatialIndexR2 class provides iterator to accessed overlaped object one-by-one.
+3. Add SpatialIndex.getWrappingRectangle() and  SpatialIndexR2.getWrappingRectangle() methods
+4. Add Link.setSize() method.
+5. Add MappedFile class based on java.nio package for mapping database file on virtual memory
+(JDK 1.5 version only)
+
+--- Release version 2.30 15.07.2004 -------------------------------------
+1. Fix bug in JAssist translator class
+
+--- Release version 2.31 06.08.2004 -------------------------------------
+1. Support final fields in peristent object. 
+2. Add L2List and L2ListElem classes
+3. Fix bug in importing/exporting of raw fields introduced in version 2.23
+
+--- Release version 2.32 21.08.2004 -------------------------------------
+1. Fix bug in Launcher.java class to be compatible with new Perst class loading policy 
+introduced in version 2.26
+2. Add support of enum fields for JDK 1.5
+3. Fix critical synchronization bug in writing modified objects to the disk
+4. Fix problem with building JDK 1.5 version of Perst with latest javac compiler
+5. Support new kind of per-thread transactions: serializable transactions
+6. Alternative B-Tree implementation (as normal Java object and not using direct access 
+   database pages). New implementation of B-Tree will be used instead of old implementation
+   if "perst.alternative.btree" property is set. New B-Tree has incompatible format with 
+   old B-Tree, so you could not use old database or XML export file with new indices. 
+   Alternative B-Tree is needed to provide serializable transaction (old one could not be used).
+   Also it provides better performance (about 3 times comaring with old implementation) because
+   of object caching. And B-Tree supports keys of user defined types. 
+7. Fix bug in Index.set method
+8. Fix bug in packing array of string
+9. Fields of java.lang.Object and java.lang.Comparable type 
+   are now serialized decpite to whether "perst.serialize.transient.objects" property was set or not
+10. Add Persistent onStore method which is invoked before object is stored in the database
+
+
+--- Release version 2.33 27.08.2004 -------------------------------------
+1. Background garbage collection
+2. Add Storage.getUsedSize() and Storage.getDatabaseSize() methods
+
+--- Release version 2.34 16.09.2004 -------------------------------------
+1. Add "perst.file.noflush" property. When it is assigne true value, 
+Perst will not perform flush of file during transaction commit. It will greatly increase performance because
+eliminate synchronous write to the disk (when program has to wait until all changed
+are actually written to the disk). But it can cause database corruption in case of 
+OS or power failure (but abnormal termination of application itself should not cause
+the problem, because all data which were written to the file, but is not yet saved to the disk is 
+stored in OS file buffers and sooner or later them will be written to the disk)
+2. Fix possible problems with GC memory consistency verification for T-Tree and R-Tree classes
+
+--- Release version 2.35 02.10.2004 -------------------------------------
+1. Fix problem with supporting compound keys in alternative implementation of B-Tree
+2. Fix bug (cuase inefficient execution) in TimeSeries.Contains method.
+3. Support new version of JAssist 
+
+--- Release version 2.36 07.10.2004 -------------------------------------
+1. Make it possible to specify encoding for storing string
+(done by Michael Samblanet <msamblanet@cox.net>)
+2. Handle null values of enum fields
+3. Add StorageListener class
+4. Fix compilation problems with latest J2SE 5.0.
+
+--- Release version 2.37 10.10.2004 -------------------------------------
+1. Add PATRICIA Trie container
+2. Fix problem with generated by JAssist pack/unpack functions introduced in 2.36 version 
+
+--- Release version 2.38 29.10.2004 -------------------------------------
+1. Fix bugs in XML import/export
+2. Fix check for invalid OID in Storage.getPos method 
+3. Change BLOB implementation to support work with very large BLOBs 
+(proposed by Mikhail Kotelnikov <mikhail@kotelnikov.com>)
+4. Fix bug with restoring autoincrement counter in XML import
+5. Add TimeSeries.Deallocate wethod
+6. Fix bug in backup with compactification (incorrect setting of bitmap end)
+
+--- Release version 2.39 14.11.2004 -------------------------------------
+1. Fix problems with handling weak references and finalization
+2. Make it possible to SoftReference instead of WeakReference for object cache
+3. Replace elements of Link with stubs after storing Link in the database
+   to avoid memory overflow caused by pinning objects in memory.
+4. Add Ttree.Deallocate method
+5. Fix bug in SpatialIndexR2 creation in JDK 1.5 version of Perst.
+
+--- Release version 2.40 16.11.2004 -------------------------------------
+1. Add LRU object cache. Make it possible for user to selcet between "weak", "soft" and "lru"
+   cache implementation.
+2. Add PersistentString class to be able to store string in the database as independent object.
+3. Fix bug in Persistent.assignOid method introduced in version 2.39
+4. Fix bug in Link.indexOf method introduced in version 2.39
+5. Fix synchronization problem (deadlock) in background GC activation
+
+--- Release version 2.41 28.11.2004 -------------------------------------
+1. Change entry interator for AltBtree to resolve references in lazy way (only when requested)
+2. Fix bug in comparison of int keys in multifield index
+3. Fix problems with supporting more than 2^28 objects
+
+--- Release version 2.42 06.12.2004 -------------------------------------
+1. Fix bug in range search implementation in T-Tree (SortedCollection)
+2. Make it possible to specify different range types (inclusive/exclusive) in SortedCollection search methods
+
+--- Release version 2.43 10.12.2004 -------------------------------------
+1. Add BitIndex collection (allowing to select object by bit vector of boolean properties)
+
+
+--- Release version 2.44 14.12.2004 -------------------------------------
+1. Add optional file locking to prevent modification of database file by more than one application
+
+--- Release version 2.45 16.12.2004 -------------------------------------
+1. Derive Index and FieldIndex interface from common base GenericIndex
+2. Index, FieldIndex and SortedCollections are now implemting Collection interface in JDK 1.5
+
+--- Release version 2.46 19.12.2004 -------------------------------------
+1. Add Storage.makePersistent method and change implementation of Persistent.makePersistent.
+   Now makePersistent method only assigns OID to the object but doesn't store it in the database
+2. Add Storage.createThickIndex method for efficient support of indices with a lot of duplicate 
+   values of of the key
+3. Add Storage.createScalableSet method for efficient (space and speed) support of set of references 
+   small as well as large number of members
+4. Introduce IterableIterator class tp JDK 1.5 API which makes it possible to use collection 
+   interators in "for" construction
+5. Make it possible to pass key values in Index and FieldIndex methods without creating Key wrapper in JDK 1.5 API
+
+--- Release version 2.47 28.12.2004 -------------------------------------
+1. Revisted collections in JDK 1.5 API (now all collections implmements Collection interface)
+2. Rewrite R-Tree iterator implementation
+3. Fix bug in multified index key field lookup (if key belons to the base class)
+
+
+--- Release version 2.48 03.01.2005 -------------------------------------
+1. Replication support. Now Perst supports master-slaves replication model.
+Single master node replicates changes to one or more slave nodes.
+It is possible to access database at slave nodes in read-only mode.
+Look at TestReplic example.
+
+--- Release version 2.49 09.01.2005 -------------------------------------
+1. Change implementation of Link to automatically set modified bit in contaning object.
+Now it is not necessary to explicitly call modify() for object which Link component is updated.
+
+--- Release version 2.50 25.01.2005 -------------------------------------
+1. Change Perst license. Starting from this version Perst it is necessary to buy 
+commercial license for using Perst in commercial products. 
+2. Fix race condition problem in Persistent.Load method
+
+--- Release version 2.51 07.02.2005 -------------------------------------
+1. Integrate JSQL - make it possible to select collection members using SQL-like queries
+2. Support remove() method for Btree and AltBtree selection iterators
+
+--- Release version 2.52 11.02.2005 -------------------------------------
+1. Add Database class emulating object-relational database on top of Perst
+
+--- Release version 2.53 22.02.2005 -------------------------------------
+1. Fix problems with handling null values of enum fields in JDK 1.5 version.
+2. Support concurrent iterators (recover iterator state instead of throwing 
+   ConcurrentModificationException if underlying collection is modified outside iterator)
+
+--- Release version 2.54 02.03.2005 -------------------------------------
+1. Make database format tolerant to order of members in class in the particular JVM 
+
+--- Release version 2.55 21.03.2005 -------------------------------------
+1. Add versioning support (Version and VersionHistory classes)
+2. Make it possible to postion BLOB output stream to the arbitrary position
+3. Add Perst interface to Lucene full text search engine (store Lucene indices in Perst storage)
+
+--- Release version 2.56 19.05.2005 -------------------------------------
+1. Add "perst.slave.connection.timeout" storage property allowing to specify connection timeout for
+   replicated model.
+2. Do not insert entries in object cache during finalization
+3. Change behavior of Storage.makePeristent method. Now by default it works as prior version 2.46 -
+   immediately storing object in the storage. To avoid such behavior, set "perst.force.store" property
+   to false. In this case object will be just assigned OID and marked as modified (unfortunately        
+   garbage collection and finalization in Java is implemented in such way, that in this case
+   application intensively putting roots of objects trees in index can cause memory overflow.
+   
+--- Release version 2.57 08.06.2005 -------------------------------------
+1. Add Storage.merge(Iterator[]) and Storage.join(Iterator[]) to efficiently merge and join 
+   results of several index searches. It allows efficient implementation of complex search conditions.
+2. Force assignment of OID to objects referenced by fields used as a key in FieldIndex 
+   when object is inserted in index. 
+3. Fix problems with JRocket JVM.
+4. Fix problem with interference of explicit deallocation of objects and garbage collection
+
+--- Release version 2.58 19.06.2005 -------------------------------------
+1. Support compound indices (before Perst supports only compound multi-field indices)
+2. Support RDF data model (http://www.w3.org/RDF/): store/fetch/searching RDF data, XML based queries
+3. Change implentation of contains() method in Perst collection to be consistent with JDK
+   collections (comparison using equals method). Add containsObject method which is more 
+   efficient and check if collection contains specified object instance.
+4. Change Database class to support table inheritance and polymorphic queries.
+
+
+--- Release version 2.59 30.06.2005 -------------------------------------
+1. Advanced replication model: support adding of new slave nodes to running master 
+and background replication of the database to new nodes
+2. Fix problem with execution of read-only transactions at slave nodes
+3. Support elements with non-unique timestamps in TimeSeries class
+4. Fix problem with commit and rollback of serializable per-thread transactions
+5. Add multithreading support to Database class
+6. Fix problem with AltPersistentSet
+
+--- Release version 2.60 06.07.2005 -------------------------------------
+1. Support custom memory allocators and page caching limit.
+Please see "What is the most efficient way of storing multimedia data?"
+section of "Tricks and tips" chapter of Perst manual for more information.
+2. Add CompressedFile and CompressDatabase utility. 
+Now it is possible to work with compressed database in read-ony mode.
+3. Make it possible to pass null in Storage.setRoot
+4. Fix bug in JDK 1.5 version of FieldIndex
+
+--- Release version 2.61 01.08.2005 -------------------------------------
+1. LinkImpl class in JDK 1.5 version implements java.util.List interface
+2. Add IPerisistentMap class implementing java.util.Map interface and efficiently handle
+   both small and large number of members
+3. Add IPersistentList interface which implementation is based on B-Tree and provides 
+   efficient random access for large lists.
+4. Add scalable list container which is able to efficiently handle both small and large lists.
+   Until size of list is small, Link implementation  is used. When number of elements
+   exceeds some threshold, B-Tree based implementation of list is used. (JDK 1.5 version only) 
+5. Make it possible to perform select for update in Database class (set exclusive lock)
+6. Correctly handle rollback of deallocated objects in case of using per-thread
+   serializable transactions
+7. Add junit tests
+8. Catch JSQLRuntimeExceptions in QueryImpl.FilterItertator
+
+--- Release version 2.62 09.09.2005 -------------------------------------
+1. Add random access index: index optimized for access to elements by position
+2. Add GenericIndex.entryIterator(int start, int order) method
+3. Fix bug in XML import of array of strings
+
+--- Release version 2.63 31.10.2005 -------------------------------------
+1. Fix bug in BlobInputStream (it returns 0 at the end of stream instead of -1).
+2. Fix bug in PersistentListImpl.remove method
+
+--- Release version 2.64 18.01.2006 -------------------------------------
+1. Fix bug in B-Tree iterator reconstruction method
+2. Make PagePool.copy method synchronized
+3. Add ThreadSafeIterator class - it can be used as wrapper for all Perst iterators to perform safe iteration
+   through the Perst collections in mutlithreaded environment
+4. Make getThransactionContext and setTransactionContext methods public allowing multiple threads to share the same 
+   transaction
+5. Add INamedClassLoader class allowing to store in database association of persistent class with it's class loader
+6. Implement random access to BLOBs
+
+--- Release version 2.65 28.02.2006 -------------------------------------
+1. Fix bugs in L2List
+2. Fix bug in PersistentMap.clear method
+3. Do not throw KEY_NOT_FOUND exception in concurrent iterator when current object was removed outside.
+4. Fix bug in Patricia Trie implementation
+5. Fix problem with handling boolean keys in AltBtreeCompoundIndex
+
+--- Release version 2.66 11.05.2006 -------------------------------------
+1. Support multiclient access to the database
+2. Fix bug in XMLExporter
+3. Fix problem with serialization of non-persistent classes with user defined class loader.
+4. Fix bugs in versioning support and add TestVersion example
+5. Add support of custmor serializers (CustomSerialize and CustomSerializable interfaces) 
+6. Fix bug in Btree.getAt method
+
+--- Release version 2.67 15.09.2006 -------------------------------------
+1. Fix bug in object cache reallocation
+2. Fix bug in transient object serialization in JDK 1.5 version
+3. Add pinned weak object cache (to make it possible to eliminate object finalization)
+ 
+
+--- Release version 2.68 25.09.2006 -------------------------------------
+1. MIDP/CLDC1.1 port of Perst.Lite
+
+--- Release version 2.69 05.10.2006 -------------------------------------
+1. BlackBerry support
+2. Add UAR example of MIDP/CLDC midlet
+
+
+--- Release version 2.70 03.03.2007 -------------------------------------
+1. Fix two bugs in BtreeCompoundIndex class in Perst.Lite version
+2. Add beginTransaction/commitTransaction/rollbackTransaction method to Database class
+3. Make it possible to vary maximal number of objects in storage using StorageImpl.dbDatabaseOidBits parameter
+
+--- Release version 2.71 18.07.2007 -------------------------------------
+1. Add org.garret.perst.continuous package implementing multiversioned database
+based on JDK 1.5 annotations, SubSQL, optimiztic version control and full text search provided by Lucene
+2. Add FieldIndex.queryByExample method
+3. Fix bug in AltBtree compound index implementation
+4. Fix bug in boolean and link types pack method (Perst.Lite) 
+5. Allows multiple threads to concurrent read-only access the same object without synchronization
+6. Fix problems with accessing multiple record storages in Perst.Lite for S40 divices
+
+--- Release version 2.72 21.09.2007 -------------------------------------
+1. Ignore synthetic fields in persistent classes
+2. Add Database.getIndices method 
+3. Fix bug in deserializing of array of float type in Perst.Lite
+4. Fix bug in XML export of array of int and enum in version for JDK 1.5
+
+--- Release version 2.73 18.10.2007 -------------------------------------
+1. Prevent stack overflow in cloning bitmap pages
+2. Fix error in writeArrayOfString (Perst Lite)
+3. Store in database version of database format
+4. Change allocation of extended allocation bitmap pages
+5. Sort class fields in class descriptor to preserve field order at all platforms
+6. Make it possible for writeLink method (Perst Lite) to serialize classes implemented Link interface 
+   but not derived from LinkImpl
+7. Support of Date type in JSQL
+8. Add EmbeddedLink interface to allow creation of custom implementations of embedded links
+9. Add Simple.java example illustrating basic principles of Perst aplication design
+
+--- Release version 2.74 24.11.2007 -------------------------------------
+1. New implementation of infinite page pool for Perst Lite
+2. Make it possible to import data in RMS storag for Perst Lite
+
+--- Release version 2.75 12.12.2007 -------------------------------------
+1. Add KD-Tree index
+2. Android platform example
+3. Fix bug in != operator implementation in SubSQL
+4. Fix bug with class field order in XML export/import
+5. Support case insensitive indices
+
+--- Release version 2.76 14.01.2008 -------------------------------------
+1. Fix bug with handling boolean fields in JSQL
+2. Add extra parameter to QBE implementation for multidimensional index allowing to treat zero values of fields
+as non specified.
+
+--- Release version 2.77 09.02.2008 -------------------------------------
+1. Connected Device Configuration (CDC 1.1) support
+
+--- Release version 2.78 15.02.2008 -------------------------------------
+1. Change serialization mechanism for transient object to force
+storing of referenced persistent capable objects in the storage.
+
+--- Release version 2.79 29.02.2008 -------------------------------------
+1. Change semantic of SortedCollection.contains method to use equals instead of identity comparision
+   and add  SortedCollection.compareKey method
+2. Support arbitrary comparable key types in PersistentMap
+3. Add MultidimensionalIndex.optimize() method which reconstructs KD-Tree to make search more efficient
+
+--- Release version 2.80 14.03.2008 -------------------------------------
+1. Add RandomAccessFile.exportData method to RMS implementation of database file (Perst.Lite)
+2. Support database encryption in CompressedReadWriteFile class (JDK 1.5 only)
+3. Fix bug in KD-Tree implementation
+
+--- Release version 2.81 29.03.2008 -------------------------------------
+1. Use indices declared in base classes in JSQL
+2. Correctly handle inheritance of indices in Continuous package
+3. Eliminate file system locking perfromed by Lucene in Continous package
+4. Fix problems with location class loader at Android
+5. Make it possible to specify RecordStore authorization mode for Perst.Lite
+
+--- Release version 2.82 09.04.2008 -------------------------------------
+1. Support database compression and encryption in Perst.Lite
+
+--- Release version 3.00 19.04.2008 -------------------------------------
+1. Full text index
+
+--- Release version 3.01 30.04.2008 -------------------------------------
+1. Fix bug in CompressedFile for Perst.Lite
+
+--- Release version 3.02 06.06.2008 -------------------------------------
+1. Fix incompatibilities with  BlackBerry JDE 4.3
+2. Add SearchEngine example (full text search)
+3. Fix bug in read-write compressed file implementation
+4. Optimized version of full text index
+
+--- Release version 3.03 08.08.2008 -------------------------------------
+1. Make it possible to choose at runtime between CDC(RandomAccessFile), JSR75(FileConnection) and RMS(RecordStore) 
+implementations of database file for Perst.Lite.
+2. Treat null string as empty string in JSQL
+3. Ignore errors in XML export method (to be able to save as much data as possible for ccorrupted database)
+
+--- Release version 3.04 14.08.2008 -------------------------------------
+1. Support full text search in Perst.Lite
+2. Optional support of weak references in Perst.Lite
+
+--- Release version 3.05 23.09.2008 -------------------------------------
+1. Add ISerializable.isPinnable method to Perst.Lite and do not pin in strong object
+cache objects with references.
+
+--- Release version 3.06 01.10.2008 -------------------------------------
+1. Add GenericIndex.deallocateMembers and GenericIndex.indexOf method
+2. Change implementation of PersistentIterator.nextOid() method to return 0 instead of throwing NoSuchElementException
+
+--- Release version 4.01 17.01.2009 -------------------------------------
+1. Make it possible to store in the database instances of arbitrary class (no need to derive it from Persistent base class)
+2. Make JDK 1.5 version of Perst API default (perst.jar now corresponds to JDK 1.5 version)
+3. Change object cache implementation in Perst.Lite 
+4. Add Database.removeFromAllIndices/Database.includeInAllIndices methods
+5. Fix bug in GenericIndex.indexOf implementations
+6. Add PIMindex full text search example for J2ME
+7. Fix problem with Rc4File in multiclient mode
+8. Rewrite custom serializers support (now custom serializer works with standard stream
+and is able to correctly serialize references to Perst objects).
+9. Add SelfSerializable interface for classes which wants to perform serialization themselves
+10. Provide access to raw input/output stream in Perst.Lite serializer
+11. Support the latest 3.9.0 version of Javassist
+12. Support the latest version of AspectJ 1.6.3
+
+--- Release version 4.02 23.02.2009 -------------------------------------
+1. Improve JSQL optimizer to perform indexed join: now conditions like "album.label.name=?" can be
+   executed using index search.
+2. Add first(), size(), toList() methods to IterarableIterator for more convenient manipulation with selections
+3. Store persistent object without finalizer instead of marking it as modified
+4. Eliminate possible deadlocks in code handling persistent object not derived from Persistent
+5. FileFactory workarround for Blackberry (Perst.Lite)
+6. Fix problem with too small buffer size for asynchronous replication
+7. Make it possible to use page pool larger than 4Gb
+
+--- Release version 4.03 14.03.2009 -------------------------------------
+1. Optimize size of scalar, string and null field values in Perst.Lite database (store only minimal required number of bytes)
+2. Compress occurrences list in full text search engine
+3. Support of XML import/export for Perst.Lite
+4. Change format of ClassDescriptor to provide backward compatibility with 3.* versions of Perst.
+Sorry, but it breaks compatibility with databases created with 4.01 and 4.02 versions of Perst.
+5. Add ILoadable and IStoreable interface to be able to provide onLoad and onStore callbacks
+for classes not derived from Persistent
+
+--- Release version 4.04 28.03.2009 -------------------------------------
+1. Provide backward compatibility for "perst.implicit.values" and "perst.serialize.transient.objects"
+   options
+2. Improve JSQL optimizer: try to apply index to all conjuncts in the query predicate
+3. Use indices in JSQL to provide requested sort order whenever possible
+4. Make it possible to execute query prepared by Database class without explicit specification of class extent
+5. Fix bug in LinkImpl for objects not derived from Persistent
+6. Use indices in JSQL optimizer for OR and IN operators
+7. Add JSQL query code generator
+8. Add Database.updateKey method which handle updte of indices and mark object as modified
+9. Fix bug in LRU object cache implementation for Perst.Lite which can cause memory exhaustion
+
+--- Release version 4.05 03.04.2009 -------------------------------------
+1. Support reflection in Perst.Lite: make it possible for programmer to describe format of application
+classes using interface similar with standard Java java.lang.reflect package either manually, 
+either using SerGen utility. This reflection metadata allows to implement in Perst Lite
+features of mainstream Perst version based on reflection: field indices, JSQL query language, 
+RBMS facade (Database class). 
+2. Fix bug in serializable transactions rollback
+3. Fix memory leak in Database.DropTable
+4. Workarround for Java weak reference bug in Nokia N95 and some other devices at Symbian OS platform
+
+--- Release version 4.06 28.04.2009 -------------------------------------
+1. Support automatic creation of required indices in Database class
+2. Sort data in FieldIndex.addAll method to provide efficient bulk load of data
+3. Provide workaround for S60 5th edition bug in RMS implementation
+
+--- Release version 4.07 05.06.2009 -------------------------------------
+1. Ignore null string field values in FieldIndex
+2. Add ResultSet class to PerstLite
+3. Add hash table implementation
+4. Check string value limit
+5. Fix bug with handling arrays of enums
+6. Implement garbage colelction for Perst.Lite
+
+--- Release version 4.08 28.06.2009 -------------------------------------
+1. Add to Perst.Lite methods for packing/unpacking fields of Vector, Hashtable and Object type.  
+2. Add StorageListener.queryExecution method to make it possible to profile queries execution
+3. Add QueryProfiler class
+
+--- Release version 4.09 05.07.2009 -------------------------------------
+1. Add scalable persistent map implementation for Perst.Lite
+2. Add onObjectLoad, onObjectStore, onObjectDelete, onObjectAssignOid callbacks to StorageListener
+3. Add Storage.isInsideThreadTransaction method
+4. Fix bug in handling record store overflow in Perst.Lite
+
+--- Release version 4.10 16.07.2009 -------------------------------------
+1. Support arbitrary expression in order-by clause in JSQL
+2. Fix bug in prefix search implementation in Perst.Lite
+
+--- Release version 4.11 02.08.2009 -------------------------------------
+1. Fix bug in handling record store overflow in Perst.Lite introduced in 4.08 version
+
+--- Release version 4.12 14.08.2009 -------------------------------------
+1. Allocate space for pool pages on demand
+2. Workarround for verification bug in Blackberry JDE (http://www.blackberry.com/knowledgecenterpublic/livelink.exe/fetch/2000/348583/1407892/Support_-_Application_throws_a_verification_error_when_launched.html?nodeid=1487534&vernum=0)
+3. Add FullTextIndex.getKeywords method
+4. Make public PerstCatalogue class from Perst Lucene interface
+
+--- Release version 4.13 21.08.2009 -------------------------------------
+1. Add SmallMap class for efficient storing of small set of <key,value>  pairs
+2. Add Decimal class representing lightweight fixed size decimal numbers
+3. Add FullTestIndex.prefixSearch method
+4. Remove incorrect assert from LruObjectCache in Perst.Lite
+
+--- Release version 4.14 14.09.2009 -------------------------------------
+1. Update XML import/export in Perst.Lite
+2. Fix bug in implementation of Decimal class
+3. Fix bug in PersistentMap.clear method implementation in Perst.Lite
+4. Fix problems with XML import/export in Perst.Lite
+5. Add Database.searchPrefix, FullTextIndex.searchPrefix and FullTextSearchResult.merge methods
+6. Support primitive type wrappers in SerGen utility for Perst.Lite
+7. Benchmark.apk file for Android TestIndex application is included in distributive
+
+--- Release version 4.15 19.09.2009 -------------------------------------
+1. Add DBConv utility for encryption/decryption/compression/decompression of existed database (dbconv.jar)
+2. Remove objects from derived table in Database.dropTable method
+
+--- Release version 4.16 21.10.2009 -------------------------------------
+1. Correctly handle record store overflow in Perst.Lite RMS import method
+2. Fix problem with multiclient support in read-only mode
+3. Fix bug in transaction rollback in Perst.Lite
+4. Fix problem with search reference fields using JSQL
+5. Add "perst.reload.objects.on.rollback" property to allow reloading of modified
+ objects in case of transaction rollback
+6. Fix bug in JSQL query optimizer
+7. Fix bug in Perst.Lite AltBtreeFieldIndex
+8. Reload database scheme in Database.rollback
+9. Support indices of boolean key type in JSQL
+10. Fix bug in order-by clause implementation in JSQL in Perst.Lite
+
+--- Release version 4.17 23.10.2009 -------------------------------------
+1. Check that database is accessed inside transaction in multithreaded mode in Database class
+2. Fix bug in locking mechanism in Perst.Lite
+3. Fix problem with runnung garbage collector for Database class in Perst.Lite
+
+--- Release version 4.18 09.11.2009 -------------------------------------
+1. Support JSR-75 multifile
+2. Add Storage.SetRecursiveLoading method to be able to specify loading policy for classes not derived from Persistent.
+3. Do not perform recursive loading of deleted objects in Database.DropTable method
+4. Add IPersistentSet.join method
+5. Optimization for "order by ... desc" clause in JSQL
+6. Add optional cost based optimization in JSQL engine (can be tuned using SqlOptimizerParameters class).
+   If SqlOptimizerParameters.enableCostBasedOptimization is true, then Perst will choose order of query conjuncts computation 
+   based on estimated execution costs.
+7. Support field of Class type
+8. Add ThickFieldIndex implementation
+9. Support thick indices (indices optimized for large number of duplicates) in SQL
+10. Ignore character case in all string operations for fields marked as indexable with case insensitive attribute.
+
+--- Release version 4.19 07.12.2009 -------------------------------------
+1. Add Database.getKeywords and Database.countRecords methods
+2. Set concurrent iterator mode in Database class
+3. Fix problems with serialization/deserialization of wrappers of numeric types in Perst.Lite
+
+--- Release version 4.20 18.01.2010 -------------------------------------
+1. Support modifications of persistent object in onStore callback and overridden Persistent.store method
+2. Support equality comparison operations for byte arrays in JSQL
+3. Implement iterator for R-Tree returning neighbors in distance increasing order
+4. Optimization of fixed size byte arrays in B-Tree index in Perst.Lite (FixedSize field modifier)
+5. Support custom serializers by SerGen utility for Perst.Lite by means of the following annotations: 
+   @serializable, @binary, @property
+
+--- Release version 4.21 19.03.2010 -------------------------------------
+1. Treat expression in parentheses as list if it is right operand of IN operator
+2. Add "perst.compatibility.mode" property
+3. Correctly handle null values of key fields in Database class for non-unique indices
+4. Fix bug in JSQL query optimizer
+
+--- Release version 4.22 09.07.2010 -------------------------------------
+1. Add onTransactionCommit, onTransactionRollback and onMasterDatabaseUpdate methods to StorageListener class
+2. Change underflow criteria in B-Tree implementation
+3. Add "perst.serialize.system.collections" property to allow serialization not only system collections.
+4. Fix bug in AltBtree integer comparison function
+
+--- Release version 4.23 25.08.2010 -------------------------------------
+1. Support embedded maps
+2. Check returned object class in Database.getRecords method
+
+--- Release version 4.24 16.11.2010 -------------------------------------
+1. Add AssocDB package (implementation of associative data model on top of Perst)
+2. Add "perst.search.base.classes" and "perst.global.class.extent" properties controlling tables creation and lookup 
+in Database class
+3. Add IInputStream.end() method allowing to supported adding field to the persistent classes in Perst.Lite
+4. Support random access indices in Database class
+5. Introduce PinnedPersitent base class allowing to avoid finalization for persistent classes.
+6. Add multiset (bag) index
+7. Add Index.unlink method which is similar to Index.remove but returns false instead of throwing exception of object
+   is not found in the index
+8. Avoid deadlock in Storage.backup method
+
+--- Release version 4.25 15.12.2010 -------------------------------------
+1. Fix incompatibilities with latest Eclipse Java compiler
+
+--- Release version 4.26 27.01.2011 -------------------------------------
+1. Make JSQL keywords case insensitive
+2. Perform index lookup in derived class in JSQL
+
+--- Release version 4.27 22.04.2011 -------------------------------------
+1. Support encrypted backup
+2. Fast version of encryption algorithm
+3. Correctly convert type of list items when applying index
+
+--- Release version 4.28 22.05.2011 -------------------------------------
+1. Incremental recovery of replica
+2. Fix bug in JSQL in Perst.Lite
+
+--- Release version 4.29 23.08.2011 -------------------------------------
+1. Fix bugs in replication
+2. Fix bugs in Database class in Perst.Lite
+
+--- Release version 4.30 30.01.2012 -------------------------------------
+1. Correctly perform case insensitive search in JSQL
+2. Fix bug in Rc4File introduced in 4.27
+3. Fix bug with lookup covariant methods in JSQL
+
+--- Release version 4.31 16.09.2012 -------------------------------------
+1. Optimization for read-only transactions
+2. Use long type for nModifiedin object cache top avoid overflow
+
+--- Release version 4.32 20.12.2012 -------------------------------------
+1. Fix bug in Patricia exact match search
+2. Limit level of recursion in memory allocator which can cause stack overflow in case of high memory fragmentation
+3. Add Aggregator class
+4. Add n-gram index for fast regular expression search
+5. Use 3-gram index in jsql queries
+6. Catch exceptions in finilizer thread
+
+--- Release version 4.33 23.02.2013 -------------------------------------
+1. Support autoincremented fields in JSQL (relational database wrapper).
+
+--- Release version 4.34 15.06.2013 -------------------------------------
+1. Add R-n spatial index
+2. Support inserting elements in reverse order in time series.
+3. Fix memory overflow in case of serialization of Link using PerstOutputStream 
+4. Add Sphere class for point, line, circle, ellipse and polynom objects in sphere (equatorial) coordinate system (astronomic or terrestrial)
+
+--- Release version 4.35 24.01.2014 -------------------------------------
+1. Add Storage.getPerstVersion method
+2. Add Bitmap class for efficient combining of search results
+3. Fix implementation of PersistenIterator.nextOid in thick and spatial indexes
+4. Add TestBitmap example illustrating combination of spatial and normal index searches using bitmap.
+
+--- Release version 4.36 23.08.2014 -------------------------------------
+1. Fix bug in Link.containsElement method
+2. Fix bug in BitmapAllocator and BitmapCustomAllocator
+3. Correctly deallocate object allocated in the same transaction
+4. Implement separate bitmap aligned (paged) and non-aligned (non-pages) objects.
+
+--- Release version 4.37 15.01.2015 -------------------------------------
+1. Correctly override Index.unlink method for compound indexes
+2. Fix bug in XML import of compound index
+3. Fix bug with handling dates prior to 1970
+4. Make it possible to specify format for importing/exporting date in XML
+
+--- Release version 4.38 18.03.2015 -------------------------------------
+1. Make it possible to reuse OIDs during XML import.
+
+--- Release version 4.39 24.10.2017 -------------------------------------
+1. Support Java 9
+2. Add "perst.ignore.missed.classes" property
+

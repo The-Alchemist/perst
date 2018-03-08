@@ -1,0 +1,189 @@
+<html>
+<title>
+Description of using Perst Lite in PIMindex
+</title>
+
+<body>
+<h1>
+Description of using Perst Lite in PIMindex
+</h1>
+
+<p>
+The following code, with comments and explanatory text, explains how key features of the Perst Lite object-oriented embedded database are used within the PIMindex midlet. 
+<p>
+The PIMindex midlet stores instances of a single class, <code>ContactDetails</code> in the storage. As with all Perst Lite persistence-capable classes, this class should be derived from the <code>Persistent</code> base class and provides pack/unpack routines. The ContactDetails class contains a list of key-value pairs and illustrates how a quite complex data structure can be serialized inside one persistent object: 
+
+<pre>
+public class ContactDetails extends Persistent implements FullTextSearchable
+{
+    static class Pair { 
+        String label;
+        String value;
+
+        Pair(String label, String value) { 
+            this.label = label;
+            this.value = value;
+        }
+    }
+    Vector pairs;
+
+    // Deserialize the object
+    public void readObject(IInputStream in) { 
+        int nPairs = in.readInt();
+        pairs = new Vector(nPairs);
+        for (int i = 0; i &lt; nPairs; i++) { 
+            Pair pair = new Pair(in.readString(), in.readString());
+            pairs.addElement(pair);
+        }
+    }
+
+    // Serialize the object
+    public void writeObject(IOutputStream out) { 
+        int nPairs = pairs.size();
+        out.writeInt(nPairs);
+        for (int i = 0; i &lt; nPairs; i++) { 
+            Pair pair = (Pair)pairs.elementAt(i);
+            out.writeString(pair.label);
+            out.writeString(pair.value);
+        }
+    }
+}
+</pre>
+
+
+In Perst Lite, all persistence-capable classes (classes whose instances can be stored in the database storage) should be accessible through a single root object. So, this object should contain collections that keep references to all the application's top-level objects. 
+
+<p>
+The <code>ContactDetails</code> class implements the <code>org.garret.perst.fulltext.FullTextSearchable</code>
+interface. This means that the class itself can provide all necessary information for full-text search indexing. 
+There are two methods defined in the <code>FullTextSearchable</code> interface: <code>getText()</code> and
+<code>getLanguage()</code>. 
+The first method returns readers: stream of bytes representing an object's text data. 
+The second method is used to inform the search engine about the language of the document. 
+The language may be needed to correctly split documents into words and perform <i>stemming</i>
+(replacing words with their normal forms). The default implementation of the  <code>FullTextSearchHelper</code> 
+class provided by Perst doesn't support any particular language, so the value returned by this method is not critical here. Implementation of the <code>getText()</code> method is the following: 
+
+<pre>
+    public Reader getText()
+    {
+        StringBuffer buf = new StringBuffer();
+        int nPairs = pairs.size();
+        for (int i = 0; i &lt; nPairs; i++) { 
+            Pair pair = (Pair)pairs.elementAt(i);
+            buf.append(pair.value);
+            buf.append('\n');
+        }
+        return new StringReader(buf.toString());
+    }
+</pre>
+
+Please note that there is no <code>StreamReader</code> class in MIDP. For convenience, Perst Lite's 
+<code>org.garret.perst.fulltext</code> package provides the implementation of this class, 
+which is used in the <code>getText()</code> method.
+<p>
+
+Each Perst or Perst Lite database should have a single root object. In the PIMindex example, 
+this root object is <code>FullTextIndex</code>. 
+Full text indexing requires a helper class, responsible for parsing and stemming indexed documents' 
+text and queries, and for tuning search engine parameters. In actual full-text search applications, 
+the programmer would provides the helper class implementation to deal with documents' real formats 
+and to support some set of languages. But this PIMindex example uses uses Perst's default helper 
+class implementation: 
+
+<pre>
+public class PIMindex extends MIDlet implements CommandListener  
+{ 
+    static final int PAGE_POOL_SIZE = Storage.INFINITE_PAGE_POOL;
+
+    public PIMindex() 
+    {
+        // Get instance of Perst storage
+        db = StorageFactory.getInstance().createStorage();
+        db.setProperty("perst.string.encoding", "UTF-8");  // use UTF-8 encoding for strings
+        // Open the database with given database name and specified page pool (database cache) size
+        db.open(DATABASE_NAME, PAGE_POOL_SIZE);
+        index = (FullTextIndex)db.getRoot(); // full text index is root object of the storage
+        if (index == null) { // if database is not yet initialized
+            // create full text search index using default FullTextSearchHelper implementation 
+            index = FullTextIndexFactory.createFullTextIndex(db);
+            db.setRoot(index); // set new root object
+            importData(); // import data from PIM to the Perst database
+            db.commit(); // commit transaction, saving all imported data in the database
+        }
+    }   
+}             
+</pre>
+
+Notice two things: first, this midlet uses an infinite database pool size. This is because the information stored in a contact list probably isn't huge, and can likely fit in memory. Also, this example uses the JSR-75 version of the Perst Lite database (JSR-75 is an optional Java ME package that allows midlets to access data in file systems). Unfortunately, some JSR-75 implementations handle random reads from a file very inefficiently. Caching the whole database in memory helps avoid such accesses. 
+<p>
+Second, this midlet explicitly sets up UTF-8 encoding. By default, Perst stores strings as array of chars (UTF-16). But if most of the string are expected to be in English or in another language with a mostly Latin alphabet, then UTF-8 allows the string size to be reduced by half, since it stores one byte per ASCII character.
+<p>
+
+Since <code>ContactDetails</code> class implements <code>FullTextSearchable</code> interface, 
+adding it to the index is trivial:
+
+<pre>
+    void importData() 
+    { 
+        try { 
+            PIM pim = PIM.getInstance();
+            String[] allLists = pim.listPIMLists(PIM.CONTACT_LIST);
+            for (int i = 0; i &lt; allLists.length; i++) { 
+                ContactList list = (ContactList)pim.openPIMList(PIM.CONTACT_LIST, PIM.READ_ONLY, allLists[i]);
+                Enumeration items = list.items();
+                while (items.hasMoreElements()) { 
+                    Contact contact = (Contact)items.nextElement();
+                    index.add(new ContactDetails(contact)); // Add document to the index
+                }           
+            }
+        } catch (PIMException x) { 
+            x.printStackTrace();
+        }
+    }
+</pre>
+
+
+A search in the full text index is performed as follows: 
+
+<pre>
+    public void commandAction(Command c, Displayable d) 
+    {
+        if (c == QUIT_CMD) {
+            destroyApp(true);
+            notifyDestroyed();
+        } else if (c == FIND_CMD) {
+            String query = inputField.getString().trim();
+            if (query.length() != 0) { 
+                new SearchResultList(this, query, index.search(query, LANGUAGE, MAX_RESULTS, TIME_LIMIT));
+            }
+        } else if (c == REFRESH_CMD) { 
+            // reconstruct the index
+            index.clear();
+            importData();
+            db.commit();
+        }
+    }
+</pre>
+
+The <code>FullTextIndex.search</code> method takes four parameters.
+ The first is a string with the query. A query can contain any set of search words, 
+phrases (group of words in quotes), and logical expressions. The list of stop words
+ and names used for logical operators can be configured through the <code>FullTextSearchHelper</code> class. 
+The second parameter specifies the language of the query (ignored by default in the <code>FullTextSearchHelper</code> 
+implementation). The last two parameters specify compromises between the maximum number of documents 
+returned by the search engine, and the maximum allowed query execution time. Obviously, retrieving 
+larger number of search results requires more time, and specifying too small a limit for query 
+execution time will lead to too few results. Usually, delays of less than one second are not critical 
+for users, and no user is able to look through more than 100 results. But in the case of the 
+PIMindex midlet, where the index will likely be small, these parameters are not critical.
+
+
+</body>
+</html>
+  
+
+
+
+
+

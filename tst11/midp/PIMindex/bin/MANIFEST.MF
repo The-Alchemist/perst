@@ -1,0 +1,9 @@
+MIDlet-1: PIMindex, /logo.png, PIMindex
+MIDlet-Name: PIMindex
+MIDlet-Permissions: javax.microedition.pim.ContactList.read,javax.micr
+ oedition.io.Connector.file.read,javax.microedition.io.Connector.file.
+ write
+MIDlet-Vendor: Unknown
+MIDlet-Version: 1.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0

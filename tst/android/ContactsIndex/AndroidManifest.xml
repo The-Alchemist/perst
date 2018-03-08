@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="org.garret.perst.sample"
+      android:versionCode="1"
+      android:versionName="1.0.0">
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+        <activity android:name=".ContactsIndex"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.google.note" />
+            </intent-filter>
+        </activity>
+<activity android:name=".SearchResultList">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.google.note" />
+            </intent-filter>
+</activity>
+<activity android:name=".SearchResultForm">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.google.note" />
+            </intent-filter>
+</activity>
+</application>
+	<uses-permission android:name="android.permission.READ_CONTACTS"/>
+</manifest> 

@@ -1,0 +1,2 @@
+del ..\perstdoc.zip
+zip -r ..\perstdoc.zip index.html doc license.html doc11 doc14 rdf/doc tst11/midp/Basketball/doc tst11/midp/Basketball/src tst11/midp/PIMindex/src tst/android/Benchmark/doc/ tst/android/Benchmark/src tst/android/ContactsIndex/doc/ -x doc\sources\*

@@ -1,0 +1,171 @@
+<html>
+<head>
+<title>Assocdb - an associative database model superstructure on top of Perst OODBMS</title>
+<ol>
+<li><a href="#intro">Introduction: what is AssocDB and why it was created</a></li>
+<li><a href="#model">Data model of AssocDB</a></li>
+<li><a href="#transactions">AssocDB transactions</a></li>
+<li><a href="#queries">AssocDB queries</a></li>
+<li><a href="#dml">Data manipulation API</a></li>
+<li><a href="#fulltext">Full text search support</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="index.html">JavaDOC API reference</a></li>
+</ol>
+</head>
+<body>
+<h2><a name="intro">Introduction: what is AssocDB and why it was created</a></h2>
+
+The Java and C# languages employ static type checking. The format of classes is strictly defined at compile time and cannot be changed later, at runtime. This solution is clear, efficient, safe and convenient for most applications. 
+But some applications benefit from a more flexible approach to data. For example, with information systems for medicine, it is hard to conclude which set of fields will be enough to describe some disease or diagnosis. And in the case of universal systems - that is, systems that must be extensively tuned for different customers - there should be a way to adjust the application and database model to match individual needs.
+<p>
+XML documents provide an example of the need for, and benefits of, such flexibility. XML has become widely used for purposes such as specifying system configuration and exchanging data between systems. As such, XML has become a de-facto standard for storing and exchanging structured data in the most flexible way. Unlike proprietary vendor-specific binary formats, XML's open format can be interpreted by any application with an XML parser. Although it is possible to pre-define the schema of an XML document (using a DTD, for example), the main advantage of XML is its flexibility. For example, if a new characteristic is needed, it can be accommodated by introducing a new tag.
+<p>
+Although there are several implementations of both XML DBMSes and DBMSes supporting the highly flexible associative data model, none of these have become popular. The reason is that the performance price of this flexibility has been too high, causing these database systems to significantly underperform traditional DBMSs. Many of the associative and XML DBMSs have been implemented as layers on top of existing RDBMSs. This burdens the resulting system with both an additional "layer" of processing, and with handling complex structured data containing sophisticated dependencies, which is typically not RDBMSs' strong suit. As a result, performance has been poor.
+<p>
+To improve on these earlier efforts, we offer AssocDB, which implements the concept of the associative database model using Perst, an object-oriented database system. With its wide range of supported indexes, and direct references between objects, Perst offers an efficient background for handling dynamic data objects.
+<p>
+
+<h2><a name="model">Data model of AssocDB</a></h2>
+
+Strictly speaking, AssocDB is not a true associative database. However, its API supports this model in the sense of storing data and metadata as items and links. The goal of AssocDB is to provide efficient access to items, so that all information related to an item can be retrieved in one read instead of requiring multiple joins. As a result, access time for an item should be comparable to accessing a record in an RDBMS or an instance of a normal (static) class in an OODBMS.
+<p>
+The AssocDB model includes three main notions: 
+<ol>
+<li>items</li>
+<li>item attributes</li>
+<li>relations between items</li>
+</ol>
+
+In the associative model, attributes and relations are represented by the single notion of links. In AssocDB, attributes and relations are manipulated similarly (for example, both setting an attribute value and creating a new relation can be done using the <code>link</code> method). But for people mostly familiar with object-oriented and relational data models, it seems easiest to explain attributes and relations separately.
+<p>
+An item can have an arbitrary number of attributes. Each attribute has a name (an arbitrary string). It is possible to associate several values with the same name, resulting in a structure similar to an array. Elements of this "array" can be accessed by their positions. AssocDB supports numeric and string attribute values. For numeric values, the <code>double</code> type is used. A significant restriction is that all values of the attribute must have the same type. For example, it is impossible to specify the "age" attribute in one item as a number (38) and in some other item as a string ("3 months").
+<p>
+
+AssocDB supports any kind of relations between items: one-to-one, one-to-many, and many-to-many. The size of relations can vary from 1 to several million records. To provide efficient manipulation with such relations, AssocDB automatically chooses the most efficient representation of them. Small relations are embedded inside items, i.e., we store references to target items inside the source item. When the total size of all of an item's relations (the number of links from the item) exceeds some threshold value, AssocDB moves to an external representation of the relations based on B-Tree index.
+<p>
+To enforce reference consistency when updating or removing items, AssocDB automatically adds an inverse reference.
+If a "doctor" link is added to a patient item, then the doctor's item will automatically be assigned a "-doctor" link, pointed toward this patient. Such links are used internally by AssocDB to update relations, and can be also used by applications.
+<p>
+
+<h2><a name="transactions">AssocDB transactions</a></h2>
+
+Compared to the standard Perst DBMS, AssocDB's transaction API is simpler and minimizes chances of programmer error. AssocDB supports a MURSIW (multiple-readers-single-writer) transaction model with database-level locking. This means that only one transaction can update the database at any time, but multiple transactions can concurrently read from the database. 
+<p>
+All access to the database in AssocDB should be performed within a transaction body. For write transactions, this is enforced by requiring database update methods to be placed in the <code>ReadWriteTransaction</code> class. For read-only transactions, the approach is slightly different: all search methods are placed in the <code>ReadOnlyTransaction</code> class, making it impossible to run a query outside the transaction context; but for convenience, methods for accessing an item's attributes belong to the <code>Item</code> class itself. It is programmer's responsibility to avoid invoking these methods after an item has been selected and fetched, and the transaction terminated.
+<p>
+
+
+<h2><a name="queries">AssocDB queries</a></h2>
+
+AssocDB provides a simple API for constructing queries. An
+AssocDB query can look like this:
+
+<pre>
+// Find all patients with age > 50 which are diagnosed flu in last September
+for (Item patient : t.find(Predicate.and(Predicate.compare("age", Predicate.Compare.Operation.GreaterThan, 50),
+                                         Predicate.in("diagnosis", 
+                                                      Predicate.and(Predicate.between("date", "2010-09-01", "2010-09-30"),
+                                                                    Predicate.in("disease", 
+                                                                                 Predicate.compare("name", Predicate.Compare.Operation.Equals, "flu")))))))
+</pre>
+
+If results are needed in a particular order, this can be specified via one or more <code>OrderBy</code> clauses with ascending or descending order:
+
+<pre>
+// Print list of diseases with high temperature symptom ordered by name
+for (Item disease : t.find(Predicate.compare("symptoms", Predicate.Compare.Operation.Equals, "high temperature"), 
+                           new OrderBy("name")))
+</pre>
+
+Note that this sort is performed in memory and is expensive in performance terms. If all that's needed is a list of items
+ordered by the value of a particular attribute, it's better to use the <code>getOccurrences(String name, OrderBy.Order order)</code> method. This method just iterates through the existing index in the specified direction.
+<p>
+
+AssocDB has no query language. Today, it is increasingly rare for programmers to be expected to write queries in SQL or another query language. Instead, most queries are constructed from data that is entered into a GUI form: the user inputs some data in form slots,
+and based on this data, a query predicate is constructed. Because of this, it is more convenient to use a special API for constructing 
+queries (instead of concatenating strings to build a SQL-like query and letting the DBMS parse and compile it). In some sophisticated systems, queries can be formulated in a subset of natural language. This makes query processing the application's responsibility -- it must translate the natural language query into the form recognized by DBMS -- and in this case a query API is also more convenient than a query language. In short, a query API for AssocDB seems more likely to be used than a query language (although if the need arises, a query language and its associated compiler can easily be added later).
+
+<p>
+AssocDB automatically creates B-Tree indexes for all attributes. This  means that execution of all AssocDB queries is always performed using an index lookup and never requires sequential search. Some operation do require a sort and merge/join of result sets. AssocDB is designed to do this with minimal memory demands. 
+<p>
+
+<h2><a name="dml">Data manipulation API</a></h2>
+
+AssocDB's data manipulation API is very simple. It consists of eight basic operations: create, link, linkAt, update, updateAt, unlink, unlinkAt and remove. The <code>create</code> method creates an empty item, with no predefined attributes. The programmer determines how to fill this item: for example, a "class" attribute can be specified for each item, so that its type can be specified/determined. But this specific attribute is not required.
+<p>
+The family of <code>link</code> methods adds new associations for an item. Associated values can be of numeric (<code>double</code>), <code>String</code> or <code>Item</code> types. In the latter case, a new relation between items is created. It is also possible to pass an array of such types. To simplify creating and fetching attributes, the name-value Pair class was introduced.
+</p>
+<code>linkAt</code> methods do almost the same thing as <code>link</code> but allow insertion position to be specified.
+If an item has several associations with the same name, then the <code>link</code> method adds the new association at the end -- enabling this method to be used as an analog to an array. The <code>link</code> method just appends a new element to the end of such an "array," while <code>linkAt</code> allows insertion of a new element in a particular position. The <code>linkAt</code> method will fail if the specified position doesn't belong to the array. Note that <code>linkAt</code> can work only with embedded relations, when links are stored inside the source item. If item relations were previously transformed to external representations using B-Tree indexes
+because the number of links from the item exceeded a threshold value, then the <code>linkAt</code> method will fail. In turn,
+<code>linkAt</code> will never cause transformation of relations, even if the threshold value is reached.
+<p>
+The <code>update</code> method replaces the existing value of an attribute with new one. Again, note that it is not possible to change the type of attribute value, such as replacing a string with a number or vice versa. If there are several values with the same name associated with an item, then only the first of these is updated. And unlike <code>update</code>, the <code>updateAt</code> method makes it possible to specify the position of the element that is being updated. If we again use the array analogy, this operation equates to setting an array element. Again, the specified position must belong to the "array," or the operation will fail.
+<p>
+The <code>unlink</code> method enables removal of existing associations. It is possible to remove associations with a particular value, or to remove all attributes with the specified name. <code>unlinkAt</code> is used to remove an element at a specified position and is analogous to removing an element from an array. 
+<p>
+Finally, the <code>remove</code> method completely removes items from the database. When it is used (and also when particular attributes are updated/unlinked) AssocDB automatically updates all relations, destroying references to the removed item from other items. Cascading delete is not currently supported, for safety reasons. 
+<p>
+Below is an example of inserting data into AssocDB:
+
+<pre>
+        ReadWriteTransaction t = db.startReadWriteTransaction();
+
+        Item patient = t.createItem();
+        t.link(patient, "class", "patient");
+        t.link(patient, "name", "John Smith");
+        t.link(patient, "age", 55);
+        t.link(patient, "wight", 65.7);
+        t.link(patient, "sex", "male");
+        t.link(patient, "phone", "1234567");
+        t.link(patient, "address", "123456, CA, Dummyngton, Outlook drive, 17");
+
+        Item doctor = t.createItem();
+        t.link(doctor, "class", "doctor");
+        t.link(doctor, "name", "Robby Wood");
+        t.link(doctor, "speciality", "therapeutist");
+
+        t.link(doctor, "patient", patient);
+
+        Item angina = t.createItem();
+        t.link(angina, "class", "disease");
+        t.link(angina, "name", "angina");
+        t.link(angina, "symptoms", "throat ache");
+        t.link(angina, "symptoms", "high temperature");
+        t.link(angina, "treatment", "milk&honey");
+        
+        Item flu = t.createItem();
+        t.link(flu, "class", "disease");
+        t.link(flu, "name", "flu");
+        t.link(flu, "symptoms", "stomachache");
+        t.link(flu, "symptoms", "high temperature");
+        t.link(flu, "treatment", "theraflu");
+        
+        Item diagnosis = t.createItem();
+        t.link(diagnosis, "class", "diagnosis");
+        t.link(diagnosis, "disease", flu);
+        t.link(diagnosis, "symptoms", "high temperature");
+        t.link(diagnosis, "diagnosed-by", doctor);
+        t.link(diagnosis, "date", "2010-09-23");
+        t.link(patient, "dignosis", diagnosis);
+        
+        t.commit();
+</pre>
+
+<h2><a name="fulltext">Full text search support</a></h2>
+
+AssocDB uses Perst's internal full text search engine. This engine's text index enables the DBMS to locate an item by any combination of words used in its string attributes. Prefix search is also supported. 
+<p>
+You should use the <code>ReadWriteTransaction.includeInFullTextIndex</code> method to include an item in the full text index. Either specify the list of attributes that should be indexed, or allow AssocDB to index all string attributes. Note that when updating or removing an item's attributes that were included in the full text index, the item should be re-inserted in the full text index, by invoking the <code>includeInFullTextIndex</code> method,
+after the update. 
+<p>
+Full text search queries can be used either as part of AssocDB queries, or executed independently. In the latter case, search results can be sorted by relevance (based on inverse document frequency - IDF - or some other criteria).
+<p>
+By default, Perst provides a very simple stemmer for indexed text. You can customize full text search by overriding the <code>FullTextSearchHelper</code> class. In AssocDB it is also possible to override creation of the full text index and specify a helper other than the default. This is also true when creating a root object, indexes and new item instances. In all these cases, it is possible to override the methods corresponding to the particular AssocDB class, and provide any preferred implementations of these classes. This allows flexibility in creating customized items and indexes.
+
+<h2><a name="conclusion">Conclusion</a></h2>
+
+AssocDB is a simple and efficient database providing persistence for dynamic objects - objects whose format is not known at compile time. AssocDB strives to provide the highest level of flexibility in manipulating these objects, while delivering performance that is comparable to that achieved when working with static objects.
+
+</body>
+</html>

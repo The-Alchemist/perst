@@ -1,0 +1,83 @@
+<?xml version='1.0'?>
+<!-- This file represents a fragment of a book store inventory database -->
+<vr:store xmlns:vr="http://www.perst.org#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <book genre="autobiography" publicationdate="1981" ISBN="1-861003-11-0">
+   <title>The Autobiography of Benjamin Franklin</title>
+   <author>
+       <first-name>Benjamin</first-name>
+       <last-name>Franklin</last-name>
+   </author>
+   <price>8.99</price>
+ </book>
+ <book rdf:about="http://www.bookstore.com/books/12345" genre="novel" publicationdate="1967" ISBN="0-201-63361-2">
+   <title>The Confidence Man</title>
+   <author>
+       <first-name>Herman</first-name>
+       <last-name>Melville</last-name>
+   </author>
+   <price>11.99</price>
+ </book>
+ <book genre="philosophy" publicationdate="1991" ISBN="1-861001-57-6">
+   <title>The Gorgias</title>
+   <cite rdf:resource="http://www.bookstore.com/books/12345"/>
+   <author>
+       <name>Plato</name>
+   </author>
+   <price>9.99</price>
+ </book>
+
+ <bookshop>
+   <name>Books4y</name>
+   <location>
+      <address>
+        <zip>22525</zip>
+        <street>SE 64th Place Suite 302</street>
+        <state>Issaquah, WA 98027</state>
+      </address>
+      <vr:rectangle left="1000" top="1000" right="1010" bottom="1020"/>
+   </location>
+ </bookshop>
+ <bookshop>
+   <name>Biblio Globus</name>
+   <location>
+      <address>
+        <zip>94403</zip>
+        <street>1900 South Norfolk Street Suite 350</street>
+        <state>San Mateo, CA</state>
+      </address>
+      <vr:rectangle left="1100" top="1100" right="1120" bottom="1110"/>
+    </location>
+  </bookshop>
+
+  <rdfs:Class rdf:about="fruit">
+   <description>A fruit (usually sweet)</description>
+  </rdfs:Class>
+  <rdfs:Class rdf:about="orange" rdfs:subClassOf="fruit">
+   <description>Orangesare orange and inherit the sweetness of a fruit</description>
+  </rdfs:Class>
+  <rdfs:Class rdf:about="apple">
+   <rdfs:subClassOf rdf:resource="fruit"/>
+   <description>Green, yellow or red fruit</description>
+  </rdfs:Class>
+  <rdfs:Class rdf:about="blood_orange">
+   <rdfs:subClassOf rdf:resource="orange"/>
+   <description>Fruit bloodorange is red inside.</description>
+  </rdfs:Class>
+  
+  <apple>
+   <vendor>Golden Fruit Inc.</vendor>
+   <delivery>2005-07-15</delivery>
+   <quantity>50000</quantity>
+  </apple>
+  <orange>
+   <vendor>International Fruit Corporation</vendor>
+   <delivery>2005-06-15</delivery>
+   <quantity>100000</quantity>
+  </orange>
+  <blood_orange>
+   <vendor>Marco Inc.</vendor>
+   <delivery>2005-06-20</delivery>
+   <quantity>200000</quantity>
+  </blood_orange>
+</vr:store>
